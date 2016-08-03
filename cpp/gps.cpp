@@ -9,7 +9,6 @@ namespace constants
     const double km(6371);
 }
 
-
 class Coordinate
 {
     private:
@@ -18,9 +17,13 @@ class Coordinate
 
     public:
         Coordinate(double lat=0.0, double log=0.0) : lat(lat), log(log) { }
+        Coordinate(const Coordinate &c) {
+            lat = c.latitude();
+            log = c.longitude();
+        }
 
-        float latitude(void)  const    { return lat;  }
-        float longitude(void) const    { return log; }
+        double latitude(void)  const    { return lat;  }
+        double longitude(void) const    { return log; }
         void  latitude(double v)       { lat = v;  }
         void  longitude(double v)      { log = v; }
 
@@ -37,6 +40,7 @@ double toRadian(double v)
     return (v * constants::pi) / 180;
 }
 
+
 double distance(Coordinate c1, Coordinate c2)
 {
     double dLat = toRadian(c2.latitude() - c1.latitude());
@@ -50,12 +54,12 @@ double distance(Coordinate c1, Coordinate c2)
     return constants::km * c;
 }
 
+
 double distance(Coordinate (&ep)[2])
 {
-    cout << "Inside the function" << endl;
-    cout << ep[0] << endl;
     return distance(ep[0], ep[1]);
 }
+
 
 class Circle
 {
@@ -65,7 +69,6 @@ class Circle
 
     public:
         Circle(Coordinate c, int r) : cp(c), rd(r) {}
-
 };
 
 class Line
@@ -78,7 +81,6 @@ class Line
         Line(Coordinate ps[2])
         {
             std::copy(ep, ep+2, ps);
-            
             d = ::distance(ep);
         }
 
@@ -102,13 +104,14 @@ double checkIntersection(Line l, Circle c)
 
 int main(void)
 {
-    Coordinate p[2] = { Coordinate(52.225649, 0.087285), Coordinate(52.214051, 0.110539)};
-    Coordinate cp = Coordinate(2.225606, 0.087515);
+    Coordinate p1(52.225649, 0.087285);
+    Coordinate p2(52.214051, 0.110539);
+    Coordinate cp(2.225606, 0.087515);
 
     Circle c = Circle(cp, 2);
-    Line l(p);
+    Line l(p1, p2);
     
-    cout << p[0].latitude() << endl;
+    cout << p1.latitude() << endl;
     cout <<  l.distance() << endl;
 
     //cout << toRadians(c1.get_latitude()) << endl;
