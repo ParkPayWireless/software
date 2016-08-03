@@ -52,7 +52,9 @@ double distance(Coordinate c1, Coordinate c2)
 
 double distance(Coordinate (&ep)[2])
 {
-        return distance(ep[0], ep[1]);
+    cout << "Inside the function" << endl;
+    cout << ep[0] << endl;
+    return distance(ep[0], ep[1]);
 }
 
 class Circle
@@ -73,14 +75,16 @@ class Line
         double d;
 
     public:
-        Line(Coordinate ps[2]) : ep(ps) 
+        Line(Coordinate ps[2])
         {
-            d = distance(ep);
+            std::copy(ep, ep+2, ps);
+            
+            d = ::distance(ep);
         }
 
-        Line(Coordinate p1=0.0, Coordinate p2=0.0) : ep[0](p1), ep[1](p2)
+        Line(Coordinate p1=0.0, Coordinate p2=0.0) : ep({p1,p2})
         {
-            d = distance(ep);
+            d = ::distance(ep);
         }
 
         double distance(void) {
@@ -98,12 +102,14 @@ double checkIntersection(Line l, Circle c)
 
 int main(void)
 {
-    Coordinate c[2];
-    c[0] = new Coordinate(52.225649, 0.087285);
-    c[1] = new Coordinate(52.214051, 0.110539);
+    Coordinate p[2] = { Coordinate(52.225649, 0.087285), Coordinate(52.214051, 0.110539)};
+    Coordinate cp = Coordinate(2.225606, 0.087515);
 
-    Circle c(new Coordinate(2.225606, 0.087515));
-    Line l(c);
+    Circle c = Circle(cp, 2);
+    Line l(p);
+    
+    cout << p[0].latitude() << endl;
+    cout <<  l.distance() << endl;
 
     //cout << toRadians(c1.get_latitude()) << endl;
     
