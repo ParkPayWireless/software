@@ -12,18 +12,19 @@ namespace constants
 class Coordinate
 {
     private:
-        double lat;
-        double log;
+        double x, y;
 
     public:
-        Coordinate(double lat=0.0, double log=0.0) : lat(lat), log(log) { }
+        Coordinate(double lat=0.0, double log=0.0) : x(lat), y(log) { }
         Coordinate(const Coordinate &c) {
             lat = c.latitude();
             log = c.longitude();
         }
 
-        double latitude(void)  const    { return lat;  }
-        double longitude(void) const    { return log; }
+        double latitude(void)  const    { return x;  }
+        double longitude(void) const    { return y; }
+        double lat(void) const { return x; }
+        double log(void) const { return y; }
         void  latitude(double v)       { lat = v;  }
         void  longitude(double v)      { log = v; }
 
@@ -41,7 +42,7 @@ double toRadian(double v)
 }
 
 
-double distance(Coordinate c1, Coordinate c2)
+/* double distance(Coordinate c1, Coordinate c2)
 {
     double dLat = toRadian(c2.latitude() - c1.latitude());
     double dLon = toRadian(c2.longitude() - c1.longitude());
@@ -52,6 +53,13 @@ double distance(Coordinate c1, Coordinate c2)
                 sin(dLon/2) * sin(dLon/2) * cos(lat1) * cos(lat2);
     double c = 2 * atan2(sqrt(a), sqrt(1-a));
     return constants::km * c;
+} */
+
+double distance(Coordinate c1, Coordinate c2)
+{
+    double d = sqrt( pow((c2.lat()-c1.lat()), 2) +
+                     pow((c2.log()-c1.log()), 2) );
+    return d;
 }
 
 
@@ -74,10 +82,10 @@ class Circle
 class Line
 {
     private:
-        Coordinate ep[2];
         double d;
 
     public:
+        Coordinate ep[2];
         Line(Coordinate ps[2])
         {
             std::copy(ep, ep+2, ps);
@@ -99,7 +107,17 @@ class Line
 
 double checkIntersection(Line l, Circle c)
 {
-    return 0.0;
+    double d = l.distance();
+    double dx = (l.ep[1].x - l.ep[0].x) / d;
+    double dy = (l.ep[1].y - l.ep[0].y) / d;
+
+    double t = dx * (c.lat() - l.ep[0].x) + 
+               dy * (c.log() - l.ep[0].y);
+
+    double ex = t * dx + l.ep[0].x;
+    double ey = t * dy + l.ep[0].y;
+
+    cout << "(" << ex << ", " << ey << ")" << endl;
 }
 
 int main(void)
@@ -113,6 +131,7 @@ int main(void)
     
     cout << p1.latitude() << endl;
     cout <<  l.distance() << endl;
+    checkIntersection(l, c);
 
     //cout << toRadians(c1.get_latitude()) << endl;
     
