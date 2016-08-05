@@ -15,18 +15,18 @@ class Coordinate
         double x, y;
 
     public:
-        Coordinate(double lat=0.0, double log=0.0) : x(lat), y(log) { }
+        Coordinate(double lx=0.0, double ly=0.0) : x(lx), y(ly) { }
         Coordinate(const Coordinate &c) {
-            lat = c.latitude();
-            log = c.longitude();
+            x = c.latitude();
+            y = c.longitude();
         }
 
         double latitude(void)  const    { return x;  }
         double longitude(void) const    { return y; }
         double lat(void) const { return x; }
         double log(void) const { return y; }
-        void  latitude(double v)       { lat = v;  }
-        void  longitude(double v)      { log = v; }
+        void  latitude(double v)       { x = v;  }
+        void  longitude(double v)      { y = v; }
 
         friend std::ostream& operator<< (std::ostream &out, const Coordinate &c)
         {
@@ -77,6 +77,10 @@ class Circle
 
     public:
         Circle(Coordinate c, int r) : cp(c), rd(r) {}
+    
+        Coordinate center_point(void) const {
+            return cp;
+        }
 };
 
 class Line
@@ -86,14 +90,12 @@ class Line
 
     public:
         Coordinate ep[2];
-        Line(Coordinate ps[2])
-        {
+        Line(Coordinate ps[2]) {
             std::copy(ep, ep+2, ps);
             d = ::distance(ep);
         }
 
-        Line(Coordinate p1=0.0, Coordinate p2=0.0) : ep({p1,p2})
-        {
+        Line(Coordinate p1=0.0, Coordinate p2=0.0) : ep({p1,p2}) {
             d = ::distance(ep);
         }
 
@@ -108,23 +110,25 @@ class Line
 double checkIntersection(Line l, Circle c)
 {
     double d = l.distance();
-    double dx = (l.ep[1].x - l.ep[0].x) / d;
-    double dy = (l.ep[1].y - l.ep[0].y) / d;
+    double dx = (l.ep[1].lat() - l.ep[0].lat()) / d;
+    double dy = (l.ep[1].log() - l.ep[0].log()) / d;
 
-    double t = dx * (c.lat() - l.ep[0].x) + 
-               dy * (c.log() - l.ep[0].y);
+    double t = dx * (c.center_point().lat() - l.ep[0].lat()) + 
+               dy * (c.center_point().log() - l.ep[0].log());
 
-    double ex = t * dx + l.ep[0].x;
-    double ey = t * dy + l.ep[0].y;
+    double ex = t * dx + l.ep[0].lat();
+    double ey = t * dy + l.ep[0].log();
 
     cout << "(" << ex << ", " << ey << ")" << endl;
+
+    return 0.0;
 }
 
 int main(void)
 {
-    Coordinate p1(52.225649, 0.087285);
-    Coordinate p2(52.214051, 0.110539);
-    Coordinate cp(2.225606, 0.087515);
+    Coordinate p1(52.216691, 0.105535);
+    Coordinate p2(52.216288, 0.106272);
+    Coordinate cp(52.216410, 0.106017);
 
     Circle c = Circle(cp, 2);
     Line l(p1, p2);
