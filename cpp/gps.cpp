@@ -110,6 +110,7 @@ class Line
 double checkIntersection(Line l, Circle c)
 {
     double d = l.distance();
+
     double dx = (l.ep[1].lat() - l.ep[0].lat()) / d;
     double dy = (l.ep[1].log() - l.ep[0].log()) / d;
 
@@ -120,6 +121,11 @@ double checkIntersection(Line l, Circle c)
     double ey = t * dy + l.ep[0].log();
 
     cout << "(" << ex << ", " << ey << ")" << endl;
+
+    Coordinate pp(ex,ey);
+
+    double pd = distance(pp, c.center_point());
+    cout << "breakpoint - " << pd << endl;
 
     return 0.0;
 }
